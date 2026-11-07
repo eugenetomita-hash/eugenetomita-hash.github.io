@@ -1,0 +1,107 @@
+[
+  {
+    "bone": "mixamorigRightHand",
+    "glb": "weapons/katana_2h.glb",
+    "pos": [
+      0.09143,
+      0.02485,
+      -0.03497
+    ],
+    "quat": [
+      0.11318,
+      0.99314,
+      -0.00417,
+      -0.02906
+    ],
+    "scale": [
+      0.36671,
+      0.36671,
+      0.36671
+    ],
+    "set": "drawn"
+  },
+  {
+    "bone": "mixamorigHips",
+    "glb": "weapons/katana_sheathed_empty.glb",
+    "pos": [
+      -0.08713,
+      -0.02471,
+      -0.11834
+    ],
+    "quat": [
+      0.09631,
+      -0.77831,
+      0.12327,
+      0.60808
+    ],
+    "scale": [
+      0.54447,
+      0.54447,
+      0.54447
+    ],
+    "set": "drawn"
+  },
+  {
+    "bone": "mixamorigHips",
+    "glb": "weapons/katana_sheathed.glb",
+    "pos": [
+      -0.08713,
+      -0.02471,
+      -0.11834
+    ],
+    "quat": [
+      0.09631,
+      -0.77831,
+      0.12327,
+      0.60808
+    ],
+    "scale": [
+      0.54447,
+      0.54447,
+      0.54447
+    ],
+    "set": "sheathed"
+  },
+  {
+    "bone": "mixamorigRightHand",
+    "glb": "weapons/yari.glb",
+    "pos": [
+      0.37097,
+      -0.03987,
+      -0.05536
+    ],
+    "quat": [
+      -0.62214,
+      0.78214,
+      0.0217,
+      -0.02675
+    ],
+    "scale": [
+      1.51089,
+      1.51089,
+      1.51089
+    ],
+    "set": "yari"
+  },
+  {
+    "bone": "mixamorigSpine2",
+    "glb": "weapons/sashimono_kit_samurai.glb",
+    "pos": [
+      -0.102,
+      0.16153,
+      0.00698
+    ],
+    "quat": [
+      -0.03007,
+      0.71228,
+      0.06045,
+      0.69864
+    ],
+    "scale": [
+      0.57558,
+      0.57558,
+      0.57558
+    ],
+    "set": "sashimono"
+  }
+]

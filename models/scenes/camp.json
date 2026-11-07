@@ -1,0 +1,11 @@
+{
+ "center_world": [
+  -2999.39990234375,
+  0.0,
+  -1593.5
+ ],
+ "radius": 35.0,
+ "people": [],
+ "fires_and_torches": [],
+ "note": "Godot/three.js axes: +Y up, metres. facing_deg_y 0 = looking down -Z, 180 = looking down +Z (rotation.y in degrees). Positions are relative to the scene centre (0,0,0)."
+}

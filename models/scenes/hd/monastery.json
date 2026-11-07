@@ -1,0 +1,343 @@
+{
+  "center_world": [
+    12000.0,
+    0.0,
+    0.0
+  ],
+  "characters_left_out": [
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1136",
+      "pos": [
+        -6.6,
+        1.2,
+        -1.83
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1137",
+      "pos": [
+        -6.48,
+        1.2,
+        -2.05
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1143",
+      "pos": [
+        6.5,
+        1.2,
+        -2.04
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1144",
+      "pos": [
+        6.49,
+        1.2,
+        -1.86
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1973",
+      "pos": [
+        -4.91,
+        1.2,
+        27.94
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1974",
+      "pos": [
+        -4.91,
+        1.2,
+        27.92
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1980",
+      "pos": [
+        -6.25,
+        1.2,
+        11.05
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1981",
+      "pos": [
+        -6.27,
+        1.2,
+        10.95
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1992",
+      "pos": [
+        5.09,
+        1.2,
+        28.02
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1993",
+      "pos": [
+        5.05,
+        1.2,
+        27.91
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1999",
+      "pos": [
+        6.19,
+        1.2,
+        10.89
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@2000",
+      "pos": [
+        6.24,
+        1.2,
+        11.05
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@CharacterBody3D@2044",
+      "pos": [
+        0.0,
+        0.0,
+        33.34
+      ]
+    },
+    {
+      "facing_deg_y": -2.0,
+      "name": "@CharacterBody3D@2056",
+      "pos": [
+        -1.3,
+        0.0,
+        35.4
+      ]
+    },
+    {
+      "facing_deg_y": 2.0,
+      "name": "@CharacterBody3D@2068",
+      "pos": [
+        1.1,
+        0.0,
+        35.87
+      ]
+    },
+    {
+      "facing_deg_y": 2.0,
+      "name": "@CharacterBody3D@2084",
+      "pos": [
+        1.05,
+        0.0,
+        33.69
+      ]
+    },
+    {
+      "facing_deg_y": 180.0,
+      "name": "@CharacterBody3D@2114",
+      "pos": [
+        0.0,
+        0.0,
+        -0.8
+      ]
+    },
+    {
+      "facing_deg_y": -174.0,
+      "name": "@CharacterBody3D@2136",
+      "pos": [
+        -2.5,
+        0.0,
+        -0.93
+      ]
+    },
+    {
+      "facing_deg_y": -170.0,
+      "name": "@CharacterBody3D@2164",
+      "pos": [
+        -6.0,
+        0.0,
+        0.67
+      ]
+    },
+    {
+      "facing_deg_y": -173.0,
+      "name": "@CharacterBody3D@2194",
+      "pos": [
+        -4.4,
+        0.0,
+        0.51
+      ]
+    },
+    {
+      "facing_deg_y": 173.0,
+      "name": "@CharacterBody3D@2224",
+      "pos": [
+        4.4,
+        0.0,
+        0.51
+      ]
+    },
+    {
+      "facing_deg_y": 170.0,
+      "name": "@CharacterBody3D@2242",
+      "pos": [
+        6.0,
+        0.0,
+        0.67
+      ]
+    },
+    {
+      "facing_deg_y": -90.0,
+      "name": "@CharacterBody3D@2254",
+      "pos": [
+        -3.2,
+        0.0,
+        18.5
+      ]
+    },
+    {
+      "facing_deg_y": 90.0,
+      "name": "@CharacterBody3D@2266",
+      "pos": [
+        3.2,
+        0.0,
+        18.5
+      ]
+    },
+    {
+      "facing_deg_y": -90.0,
+      "name": "@CharacterBody3D@2278",
+      "pos": [
+        -3.2,
+        0.0,
+        15.5
+      ]
+    },
+    {
+      "facing_deg_y": 90.0,
+      "name": "@CharacterBody3D@2290",
+      "pos": [
+        3.2,
+        0.0,
+        15.5
+      ]
+    },
+    {
+      "facing_deg_y": -90.0,
+      "name": "@CharacterBody3D@2302",
+      "pos": [
+        -3.2,
+        0.0,
+        12.5
+      ]
+    },
+    {
+      "facing_deg_y": 90.0,
+      "name": "@CharacterBody3D@2314",
+      "pos": [
+        3.2,
+        0.0,
+        12.5
+      ]
+    },
+    {
+      "facing_deg_y": -90.0,
+      "name": "@CharacterBody3D@2326",
+      "pos": [
+        -3.2,
+        0.0,
+        9.5
+      ]
+    },
+    {
+      "facing_deg_y": 90.0,
+      "name": "@CharacterBody3D@2338",
+      "pos": [
+        3.2,
+        0.0,
+        9.5
+      ]
+    },
+    {
+      "facing_deg_y": -90.0,
+      "name": "@CharacterBody3D@2350",
+      "pos": [
+        -3.2,
+        0.0,
+        6.5
+      ]
+    },
+    {
+      "facing_deg_y": 90.0,
+      "name": "@CharacterBody3D@2362",
+      "pos": [
+        3.2,
+        0.0,
+        6.5
+      ]
+    },
+    {
+      "facing_deg_y": -169.0,
+      "name": "@CharacterBody3D@2374",
+      "pos": [
+        -3.0,
+        0.0,
+        28.5
+      ]
+    },
+    {
+      "facing_deg_y": 169.0,
+      "name": "@CharacterBody3D@2386",
+      "pos": [
+        3.0,
+        0.0,
+        28.5
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@CharacterBody3D@2398",
+      "pos": [
+        -15.0,
+        0.0,
+        9.95
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@2415",
+      "pos": [
+        -15.0,
+        0.15,
+        9.0
+      ]
+    },
+    {
+      "facing_deg_y": 167.0,
+      "name": "@Camera3D@2426",
+      "pos": [
+        1.02,
+        1.54,
+        28.74
+      ]
+    }
+  ],
+  "radius": 60.0
+}

@@ -1,0 +1,65 @@
+[
+  {
+    "bone": "mixamorigRightHand",
+    "glb": "weapons/katana_2h.glb",
+    "pos": [
+      0.08838,
+      0.03125,
+      -0.0028
+    ],
+    "quat": [
+      0.14318,
+      0.97772,
+      0.02579,
+      0.15129
+    ],
+    "scale": [
+      0.33244,
+      0.33244,
+      0.33244
+    ],
+    "set": "drawn"
+  },
+  {
+    "bone": "mixamorigHips",
+    "glb": "weapons/katana_sheathed_empty.glb",
+    "pos": [
+      -0.08592,
+      0.00354,
+      -0.10593
+    ],
+    "quat": [
+      0.09631,
+      -0.77831,
+      0.12327,
+      0.60808
+    ],
+    "scale": [
+      0.49359,
+      0.49359,
+      0.49359
+    ],
+    "set": "drawn"
+  },
+  {
+    "bone": "mixamorigHips",
+    "glb": "weapons/katana_sheathed.glb",
+    "pos": [
+      -0.08592,
+      0.00354,
+      -0.10593
+    ],
+    "quat": [
+      0.09631,
+      -0.77831,
+      0.12327,
+      0.60808
+    ],
+    "scale": [
+      0.49359,
+      0.49359,
+      0.49359
+    ],
+    "set": "sheathed"
+  }
+]

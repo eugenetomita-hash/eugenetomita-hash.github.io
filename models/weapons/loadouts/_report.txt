@@ -1,0 +1,36 @@
+  fit game->portfolio haru: 54 bones, turn 90.0 deg, scale 1.00000, rms 0.0000 (portfolio units; hips height 0.623)
+haru [base]: 2 item(s) yumi@mixamorigLeftHand, quiver@mixamorigSpine2
+  fit game->portfolio daimyo: 55 bones, turn 90.0 deg, scale 98.30072, rms 0.0120 (portfolio units; hips height 0.598)
+daimyo [base]: 2 item(s) katana_2h@mixamorigRightHand, katana_sheathed_empty@mixamorigHips
+daimyo [sheathed]: 1 item(s) katana_sheathed@mixamorigHips
+  fit game->portfolio bandit_boss: 55 bones, turn 90.0 deg, scale 1.00000, rms 0.0000 (portfolio units; hips height 0.585)
+bandit_boss [base]: 1 item(s) nodachi@mixamorigRightHand
+  fit game->portfolio bandit: 55 bones, turn 90.0 deg, scale 1.00000, rms 0.0000 (portfolio units; hips height 0.640)
+bandit [base]: 1 item(s) katana@mixamorigRightHand
+  fit game->portfolio goro: 55 bones, turn 90.0 deg, scale 98.89168, rms 0.0124 (portfolio units; hips height 0.599)
+goro [base]: 1 item(s) kanabo@mixamorigRightHand
+  fit game->portfolio warrior_monk_black_rigged: 55 bones, turn 90.0 deg, scale 1.00000, rms 0.0000 (portfolio units; hips height 0.609)
+warrior_monk_black_rigged [base]: 1 item(s) naginata_monk@mixamorigRightHand
+warrior_monk_black_rigged [yari]: 1 item(s) yari@mixamorigRightHand
+warrior_monk_black_rigged [sashimono]: 1 item(s) sashimono_warrior_monk_black@mixamorigSpine2
+  fit game->portfolio warrior_monk_yellow_rigged: 55 bones, turn 90.0 deg, scale 1.00000, rms 0.0000 (portfolio units; hips height 0.600)
+warrior_monk_yellow_rigged [base]: 1 item(s) naginata_monk@mixamorigRightHand
+warrior_monk_yellow_rigged [yari]: 1 item(s) yari@mixamorigRightHand
+warrior_monk_yellow_rigged [sashimono]: 1 item(s) sashimono_warrior_monk_yellow@mixamorigSpine2
+  fit game->portfolio warrior_monk_heavy_rigged: 55 bones, turn 90.0 deg, scale 1.00000, rms 0.0000 (portfolio units; hips height 0.616)
+warrior_monk_heavy_rigged [base]: 1 item(s) naginata@mixamorigRightHand
+warrior_monk_heavy_rigged [yari]: 1 item(s) yari@mixamorigRightHand
+warrior_monk_heavy_rigged [sashimono]: 1 item(s) sashimono_warrior_monk_heavy@mixamorigSpine2
+  fit game->portfolio kit_samurai: 55 bones, turn 90.0 deg, scale 1.00000, rms 0.0000 (portfolio units; hips height 0.643)
+kit_samurai [base]: 2 item(s) katana_2h@mixamorigRightHand, katana_sheathed_empty@mixamorigHips
+kit_samurai [sheathed]: 1 item(s) katana_sheathed@mixamorigHips
+kit_samurai [yari]: 1 item(s) yari@mixamorigRightHand
+kit_samurai [sashimono]: 1 item(s) sashimono_kit_samurai@mixamorigSpine2
+  fit game->portfolio kit_ashigaru: 55 bones, turn 90.0 deg, scale 1.00000, rms 0.0000 (portfolio units; hips height 0.601)
+kit_ashigaru [base]: 1 item(s) katana_2h@mixamorigRightHand
+kit_ashigaru [yari]: 1 item(s) yari@mixamorigRightHand
+kit_ashigaru [sashimono]: 1 item(s) sashimono_kit_ashigaru@mixamorigSpine2
+  fit game->portfolio ashigaru_simple: 55 bones, turn 90.3 deg, scale 1.04644, rms 0.0167 (portfolio units; hips height 0.602)
+ashigaru_simple [base]: 1 item(s) katana@mixamorigRightHand
+ashigaru_simple [yari]: 1 item(s) yari@mixamorigRightHand
+ashigaru_simple [sashimono]: 1 item(s) sashimono_ashigaru_simple@mixamorigSpine2

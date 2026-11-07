@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eugene Tomita, video editor</title>
+<meta name="description" content="Video editor for YouTube, shorts and talks: a six-minute cut of an hour-long panel, viral shorts (6.7M views), and the scripts that make rough cuts on their own.">
+<!-- link preview -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Eugene Tomita, video editor">
+<meta property="og:description" content="Video editor for YouTube, shorts and talks: a six-minute cut of an hour-long panel, viral shorts (6.7M views), and the scripts that make rough cuts on their own.">
+<meta property="og:url" content="https://eugenetomita-hash.github.io/">
+<meta property="og:image" content="https://eugenetomita-hash.github.io/media/share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#fff4e2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<script type="importmap">
+{ "imports": {
+  "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js",
+  "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.170.0/examples/jsm/"
+} }
+</script>
+<style>
+/* Plain letters set straight onto the scene, like the captions on a woodblock print:
+   indigo ink with a haze of mist round each letter so it reads over any world, and the
+   red of the sun for the few things you can press. */
+:root {
+  --ink: #1d3a6e;       /* the woodblock indigo */
+  --deep: #13264a;      /* headings */
+  --mist: #fff4e2;      /* the haze round the letters */
+  --soft: #3f5f96;      /* secondary text */
+  --sun: #d8432f;       /* the red sun */
+  --long: #22427a;
+  --trailer: #b0782a;
+  --short: #d8432f;
+  --tools: #3f7a5c;
+  --halo: 0 0 2px rgba(255, 244, 226, .95), 0 0 12px rgba(255, 244, 226, .9), 0 0 30px rgba(255, 244, 226, .6);
+  --tl-h: 64px;
+  --gut: clamp(18px, 5vw, 72px);
+  --serif: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --sans: "Zen Kaku Gothic New", "Hiragino Sans", system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { background: #c9cfd8; }
+body {
+  margin: 0; color: var(--ink);
+  font: 400 17px/1.7 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: var(--tl-h);
+}
+a { color: inherit; text-decoration-color: var(--sun); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+a:hover { color: var(--sun); }
+:focus-visible { outline: 2px solid var(--sun); outline-offset: 4px; }
+.tc { font-variant-numeric: tabular-nums; }
+video { display: block; width: 100%; background: #0d1422; }
+
+/* ---------- 3D layer ---------- */
+#world { position: fixed; inset: 0; width: 100vw; height: 100vh; display: block; z-index: 0; }
+.veil { display: none; }
+#loader {
+  position: fixed; inset: 0; z-index: 50; display: grid; place-items: center;
+  background: #eef0f2; transition: opacity .9s ease, visibility .9s;
+}
+#loader.done { opacity: 0; visibility: hidden; }
+#loader div { text-align: center; }
+#loader strong { display: block; font: 800 clamp(36px, 6vw, 72px)/1 var(--serif); color: var(--deep); letter-spacing: -.01em; }
+#loader span { display: block; margin-top: 14px; font-size: 16px; color: var(--soft); }
+#loader i { display: block; width: 180px; height: 2px; margin: 18px auto 0; background: rgba(29, 58, 110, .18); position: relative; overflow: hidden; }
+#loader i::after { content: ""; position: absolute; inset: 0; background: var(--sun); transform-origin: left; transform: scaleX(var(--p, 0)); transition: transform .3s; }
+
+/* ---------- top bar ---------- */
+.bar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 20px var(--gut); font-size: 15px; font-weight: 700;
+  text-shadow: var(--halo);
+}
+.bar .name { font: 800 20px/1 var(--serif); color: var(--deep); }
+.bar nav { display: flex; gap: 26px; }
+.bar a { text-decoration: none; }
+.bar a:hover { color: var(--sun); }
+.bar .sound { border: 0; background: none; padding: 0; font: inherit; color: var(--ink); cursor: pointer; text-shadow: inherit; }
+.bar .sound::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 7px; border-radius: 50%; background: var(--sun); vertical-align: 1px; }
+.bar .sound[aria-pressed="false"] { color: var(--soft); }
+.bar .sound[aria-pressed="false"]::before { background: none; box-shadow: inset 0 0 0 1.5px var(--soft); }
+.bar .sound:hover { color: var(--sun); }
+
+/* ---------- words over the scene ---------- */
+main { position: relative; z-index: 2; text-shadow: var(--halo); }
+.stop { position: relative; padding: 0 var(--gut); }
+.travel { height: 85vh; }
+
+.hero { height: calc(100vh - var(--tl-h)); display: flex; flex-direction: column; justify-content: space-between; padding-top: 12vh; padding-bottom: 6vh; }
+.hero h1 {
+  margin: 0; text-align: center; color: var(--deep);
+  font: 800 clamp(64px, 11vw, 180px)/.95 var(--serif); letter-spacing: -.025em;
+}
+.hero h1 span { display: block; }
+.hero-foot { display: flex; justify-content: space-between; align-items: flex-end; gap: 24px; }
+.hero-foot p { margin: 0; max-width: 30ch; font: 600 clamp(19px, 1.8vw, 24px)/1.45 var(--serif); color: var(--deep); }
+.hero-foot span { font-size: 15px; color: var(--soft); text-align: right; }
+.hero-foot span a { color: var(--ink); font-weight: 700; }
+.watch { display: inline-block; margin-top: 14px; font: 800 18px/1.3 var(--serif); color: var(--sun); text-decoration: none; border-bottom: 2px solid var(--sun); padding-bottom: 2px; }
+.watch::before { content: ""; display: inline-block; margin-right: 10px; border-left: 11px solid currentColor; border-top: 7px solid transparent; border-bottom: 7px solid transparent; vertical-align: -1px; }
+#panel-cut { scroll-margin-top: 80px; }
+.watch:hover { color: var(--deep); border-color: var(--deep); }
+#loader .simple-link { display: inline-block; margin-top: 26px; font-size: 14px; color: var(--soft); }
+
+.panels { display: flex; flex-direction: column; gap: 34vh; padding: 12vh 0; }
+.stop.right .panels { align-items: flex-end; }
+
+.panel { position: relative; isolation: isolate; width: min(540px, 100%); }
+/* a bank of mist behind the words, so they read over a crowd (no edge: it thins out to nothing) */
+.panel::before, .panels > div:first-child::before {
+  content: ""; position: absolute; z-index: -1; inset: -70px -90px; pointer-events: none;
+  background: radial-gradient(closest-side, rgba(255, 244, 226, .86), rgba(255, 244, 226, .66) 60%, rgba(255, 244, 226, 0));
+}
+.panels > div:first-child { position: relative; isolation: isolate; }
+.stop.dark .panel::before, .stop.dark .panels > div:first-child::before { background: radial-gradient(closest-side, rgba(8, 10, 16, .6), rgba(8, 10, 16, .35) 55%, rgba(8, 10, 16, 0)); }
+.panel.wide { width: min(820px, 100%); }
+/* the wide panels sit over the middle of the scene, so their mist is thicker */
+.panel.wide::before { inset: -70px -150px; background: radial-gradient(closest-side, rgba(255, 244, 226, .95), rgba(255, 244, 226, .92) 82%, rgba(255, 244, 226, 0)); }
+.panel > .frame { margin-bottom: 18px; }
+.panel .frame video { aspect-ratio: 16 / 9; }
+.panel h3 { margin: 0; font: 800 27px/1.2 var(--serif); color: var(--deep); }
+.panel .len { display: inline-block; margin-top: 2px; color: var(--soft); font-size: 14px; }
+.panel p { margin: 8px 0 0; font-size: 16.5px; line-height: 1.7; max-width: 58ch; }
+.did { margin: 12px 0 0; padding: 0; list-style: none; font-size: 15px; color: var(--soft); }
+.did li { padding: 3px 0 3px 18px; position: relative; }
+.did li::before { content: ""; position: absolute; left: 0; top: .85em; width: 8px; height: 2px; background: var(--c); }
+.did li b { color: var(--ink); font-weight: 700; }
+
+.section-title {
+  margin: 0 0 10px; display: flex; align-items: baseline; gap: 16px;
+  font: 800 clamp(44px, 6vw, 86px)/1 var(--serif); color: var(--deep); letter-spacing: -.02em;
+}
+/* the section's name in Japanese, set down the side in the sun's red */
+.section-title i { flex: none; order: -1; font: 600 18px/1 var(--serif); font-style: normal; writing-mode: vertical-rl; color: var(--sun); letter-spacing: .15em; }
+#long .section-title i::before { content: "長編"; }
+#trailer .section-title i::before { content: "予告"; }
+#short .section-title i::before { content: "短編"; }
+#tools .section-title i::before { content: "道具"; }
+.section-note { margin: 0 0 6px; max-width: 36ch; font: 600 19px/1.5 var(--serif); color: var(--ink); }
+.stop.right .panels > div:first-child { text-align: right; }
+.stop.right .section-title { justify-content: flex-end; }
+.stop.right .section-note { margin-left: auto; }
+
+/* the cave is dark: the words turn to mist-white with an inky haze */
+.stop.dark { --deep: #fff4e2; --ink: #f1e8d8; --soft: #c9c2b4; color: var(--ink);
+  text-shadow: 0 0 2px rgba(8, 10, 16, .95), 0 0 12px rgba(8, 10, 16, .85), 0 0 30px rgba(8, 10, 16, .55); }
+
+/* what I kept from the full recording */
+.cutbar { margin: 16px 0 4px; }
+.cutbar-track { position: relative; height: 16px; background: rgba(29, 58, 110, .2); }
+.cutbar-track i { position: absolute; top: 0; bottom: 0; min-width: 2px; background: var(--sun); }
+.cutbar-ticks { position: relative; height: 16px; }
+.cutbar-ticks em { position: absolute; top: 3px; font: 600 11px/1 var(--serif); font-style: normal; color: var(--soft); transform: translateX(-50%); }
+.cutbar-ticks em:first-child { transform: none; }
+.cutbar figcaption { margin-top: 4px; font-size: 14px; line-height: 1.5; color: var(--soft); max-width: 60ch; }
+
+/* shorts: three vertical clips side by side */
+.shorts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; }
+.shorts .frame { margin-bottom: 14px; }
+.panel .shorts video { aspect-ratio: 9 / 16; }
+.shorts h3 { font-size: 19px; }
+.shorts-head { grid-column: 1 / -1; margin: 6px 0 -8px; font: 600 15px/1.4 var(--serif); color: var(--soft); }
+.shorts-head:not(:first-child) { margin-top: 18px; }
+.shorts p { font-size: 15px; line-height: 1.6; }
+
+/* tools */
+.stats { display: flex; gap: 36px; margin: 16px 0 4px; }
+.stats div { display: flex; flex-direction: column-reverse; }
+.stats dt { color: var(--soft); font-size: 14px; }
+.stats dd { margin: 0; font: 800 50px/1 var(--serif); color: var(--c); }
+.steps { margin: 14px 0 0; padding: 0; list-style: none; counter-reset: s; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 28px 1fr; gap: 6px; padding: 4px 0; font-size: 15.5px; line-height: 1.55; }
+.steps li::before { content: counter(s); font: 800 17px/1.4 var(--serif); color: var(--c); }
+.scan { margin: 18px 0 4px; }
+.scan-row { display: grid; grid-template-columns: 78px 1fr; gap: 10px; align-items: center; margin-bottom: 8px; }
+.scan-row span { font-size: 13px; color: var(--soft); }
+.scan-row canvas { width: 100%; height: 22px; display: block; background: rgba(29, 58, 110, .12); }
+.scan-key { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; color: var(--soft); margin: 10px 0 0 88px; }
+.scan-key i { display: inline-block; width: 10px; height: 10px; margin-right: 6px; vertical-align: -1px; }
+
+/* about */
+.about { --c: var(--sun); }
+.about .panel p { font-size: 17px; }
+.about dl { margin: 16px 0 4px; display: grid; grid-template-columns: auto 1fr; gap: 4px 18px; font-size: 15.5px; }
+.about dt { color: var(--soft); }
+.about dd { margin: 0; }
+.contact { margin: 22px 0 4px !important; }
+.contact a { font: 800 clamp(22px, 2.6vw, 30px)/1.3 var(--serif); color: var(--deep); }
+.contact a:hover { color: var(--sun); }
+.avail { margin: 22px 0 0 !important; font-weight: 700; color: var(--sun); }
+.avail + .contact { margin-top: 2px !important; }
+.about .end { height: 4vh; }
+.about .panels { padding-bottom: 0; }
+.simple { font-size: 14px !important; color: var(--soft) !important; }
+
+/* ---------- timeline: the whole reel along the bottom, a strip of the same print ---------- */
+.timeline {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; height: var(--tl-h);
+  background: rgba(255, 244, 226, .93); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  color: var(--ink); border-top: 2px solid var(--ink);
+  display: grid; grid-template-columns: 150px 1fr; font-size: 13px;
+}
+.timeline::before { content: ""; position: absolute; left: 0; right: 0; top: -6px; height: 1px; background: var(--ink); opacity: .55; } /* the print's double rule */
+.tl-readout { display: flex; flex-direction: column; justify-content: center; padding: 0 16px; border-right: 1px solid var(--ink); }
+.tl-readout b { font: 500 14px/1.2 var(--sans); letter-spacing: .02em; color: var(--deep); }
+.tl-readout span { font: 600 13px/1.4 var(--serif); color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tl-body { position: relative; margin: 0 18px; }
+.tl-ruler { position: absolute; left: 0; right: 0; top: 0; height: 20px; }
+.tl-ruler i { position: absolute; top: 0; width: 1px; height: 4px; background: var(--ink); opacity: .4; }
+.tl-ruler i.major { height: 8px; opacity: 1; }
+.tl-ruler em { position: absolute; top: 7px; font: 600 10.5px/1 var(--serif); font-style: normal; color: var(--soft); transform: translateX(3px); }
+.tl-track { position: absolute; left: 0; right: 0; top: 23px; height: 30px; }
+.tl-clip {
+  position: absolute; top: 0; height: 100%; margin: 0; padding: 0 0 0 8px;
+  background: transparent; border: 1px solid var(--ink); border-right-width: 0;
+  color: var(--ink); cursor: pointer;
+  font: 600 12px/28px var(--serif); text-align: left; overflow: hidden; white-space: nowrap;
+}
+.tl-clip:last-child { border-right-width: 1px; }
+.tl-clip:hover { background: rgba(29, 58, 110, .1); }
+.tl-clip.on { background: var(--ink); color: var(--mist); }
+/* edit points between the videos inside a block */
+.tl-cut { position: absolute; bottom: 0; width: 1px; height: 9px; background: currentColor; opacity: .55; pointer-events: none; }
+.tl-head { position: absolute; top: 0; bottom: 6px; width: 0; left: 0; pointer-events: none; will-change: transform; }
+.tl-head::before { content: ""; position: absolute; left: -1px; top: 0; bottom: 0; width: 2px; background: var(--sun); }
+.tl-head::after { content: ""; position: absolute; left: -5px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: var(--sun); }
+
+@media (max-width: 760px) {
+  :root { --tl-h: 54px; }
+  .bar nav a:not(:last-of-type) { display: none; }
+  .panels { gap: 22vh; padding-top: 40vh; }
+  .stop.right .panels { align-items: stretch; }
+  .stop.right .panels > div:first-child { text-align: left; }
+  .stop.right .section-title { justify-content: flex-start; }
+  .stop.right .section-note { margin-left: 0; }
+  .shorts { grid-template-columns: 1fr; max-width: 300px; margin: 0 auto; gap: 30px; }
+  .hero-foot { flex-direction: column; align-items: flex-start; }
+  .hero-foot span { text-align: left; }
+  .timeline { grid-template-columns: 92px 1fr; }
+  .tl-readout b { font-size: 12px; }
+  .tl-readout span, .tl-ruler em { display: none; }
+  .tl-body { margin: 0 10px; }
+  .tl-track { top: 14px; height: 26px; }
+  .tl-clip { font-size: 0; }
+  .scan-row { grid-template-columns: 1fr; gap: 3px; }
+  .scan-key { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) { #loader, #loader i::after { transition: none; } }
+</style>
+</head>
+<body>
+
+<canvas id="world" aria-hidden="true"></canvas>
+<div class="veil"></div>
+<div id="loader" role="status"><div><strong>Eugene Tomita</strong><span id="loadText">Loading the path</span><i></i><a class="simple-link" href="flat.html">Slow to load? Open the simple version</a></div></div>
+
+<header class="bar">
+  <span class="name">Eugene Tomita</span>
+  <nav aria-label="Sections">
+    <a href="#long">Long form</a>
+    <a href="#short">Short form</a>
+    <a href="#tools">Automation</a>
+    <a href="#trailer">Trailer</a>
+    <a href="#about">Contact</a>
+    <button class="sound" id="sound" type="button" aria-pressed="true">Sound on</button>
+  </nav>
+</header>
+
+<main>
+  <section class="stop hero" data-stop="hero">
+    <h1><span>Eugene</span> <span>Tomita</span></h1>
+    <div class="hero-foot">
+      <div>
+        <p>Video editor for YouTube, shorts and talks. I write the code that does the slow parts for me.</p>
+        <a class="watch" href="#panel-cut">Watch the six-minute panel cut</a>
+      </div>
+      <span>Scroll to walk the path, built from my game.<br><a href="flat.html">Simple version without 3D</a></span>
+    </div>
+  </section>
+
+  <div class="travel"></div>
+
+  <section class="stop right" id="long" data-stop="long" style="--c: var(--long)">
+    <div class="panels">
+      <div>
+        <h2 class="section-title"><i></i>Long form</h2>
+        <p class="section-note">YouTube-length videos, paced to hold attention from start to finish.</p>
+      </div>
+      <article class="panel wide" id="panel-cut" data-clip="panel">
+        <div class="frame"><video src="media/panel.mp4" poster="media/panel.jpg" controls preload="none" playsinline></video></div>
+        <h3>An hour-long panel cut to six minutes</h3><span class="len tc">6:14</span>
+        <p>A 63-minute panel on AI and security, filmed on one wide camera, cut down to its strongest six minutes. Each speaker gets a close-up, and chapter cards, quotes, numbers and pictures land on the points they make.</p>
+        <figure class="cutbar">
+          <div class="cutbar-track" role="img" aria-label="The 63-minute recording, with the 15 stretches kept for the six-minute cut marked"><i style="left:1.54%;width:0.47%"></i><i style="left:2.88%;width:0.49%"></i><i style="left:3.44%;width:0.49%"></i><i style="left:6.89%;width:0.63%"></i><i style="left:9.42%;width:0.77%"></i><i style="left:11.69%;width:1.03%"></i><i style="left:13.11%;width:0.62%"></i><i style="left:24.64%;width:0.31%"></i><i style="left:25.31%;width:0.47%"></i><i style="left:27.60%;width:0.82%"></i><i style="left:31.45%;width:0.58%"></i><i style="left:33.09%;width:0.87%"></i><i style="left:43.06%;width:0.75%"></i><i style="left:93.50%;width:1.00%"></i><i style="left:99.23%;width:0.08%"></i></div>
+          <div class="cutbar-ticks" aria-hidden="true"><em style="left:0.00%">0:00</em><em style="left:23.59%">15:00</em><em style="left:47.18%">30:00</em><em style="left:70.77%">45:00</em><em style="left:94.35%">60:00</em></div>
+          <figcaption>The full 63-minute recording. In red, the 15 stretches I kept. The opening comes from minute 8, moved to the front as a hook.</figcaption>
+        </figure>
+        <ul class="did">
+          <li>First cut made by script from the transcript, then tightened by hand</li>
+          <li>Speakers cut out of the background, lower-thirds, chapter cards, and the thumbnail you see here</li>
+          <li><b>Made with</b> Python, Whisper, ffmpeg</li>
+        </ul>
+      </article>
+      <article class="panel" data-clip="low">
+        <div class="frame"><video src="media/low.mp4" poster="media/low.jpg" controls preload="none" playsinline></video></div>
+        <h3>All motion graphics</h3><span class="len tc">2:24</span>
+        <p>A voiceover with no camera footage. Every frame is type and animation I built around the narration.</p>
+        <ul class="did">
+          <li>Full-frame type and a custom meter graphic</li>
+          <li><b>Made with</b> Remotion, Whisper</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <div class="travel"></div>
+
+  <section class="stop right" id="short" data-stop="short" style="--c: var(--short)">
+    <div class="panels">
+      <div>
+        <h2 class="section-title"><i></i>Short form</h2>
+        <p class="section-note">Vertical edits for social, where the first second decides everything.</p>
+      </div>
+      <div class="panel wide">
+        <div class="shorts">
+          <p class="shorts-head">Three shorts cut from one hour-long panel on AI and security.</p>
+          <article data-clip="garbage">
+            <div class="frame"><video src="media/garbage.mp4" poster="media/garbage.jpg" controls preload="none" playsinline></video></div>
+            <h3>Panel to vertical</h3><span class="len tc">0:49</span>
+            <p>Shot on one wide, static camera. I reframed each speaker to a close-up and cut them out of the background.</p>
+          </article>
+          <article data-clip="criminal">
+            <div class="frame"><video src="media/criminal.mp4" poster="media/criminal.jpg" controls preload="none" playsinline></video></div>
+            <h3>A picture on every point</h3><span class="len tc">0:48</span>
+            <p>Cards pop in on the word they illustrate, so there's always something new on screen.</p>
+          </article>
+          <article data-clip="hacker">
+            <div class="frame"><video src="media/hacker.mp4" poster="media/hacker.jpg" controls preload="none" playsinline></video></div>
+            <h3>Headline hook</h3><span class="len tc">0:35</span>
+            <p>A two-line title holds the opening seconds, then hands off to small, clean captions.</p>
+          </article>
+          <p class="shorts-head">Edits for my own accounts: 46.2K followers and 4M likes on <a href="https://www.tiktok.com/@samurairamen1">TikTok</a>, 27.3K followers on <a href="https://www.instagram.com/samurairamen2/">Instagram</a>.</p>
+          <article data-clip="glowup">
+            <div class="frame"><video src="media/glowup.mp4" poster="media/glowup.jpg" controls preload="none" playsinline></video></div>
+            <h3>6.7 million views</h3><span class="len tc">0:10</span>
+            <p>A before-and-after glow-up, cut so the switch lands right on the beat.</p>
+          </article>
+          <article data-clip="hair">
+            <div class="frame"><video src="media/hair.mp4" poster="media/hair.jpg" controls preload="none" playsinline></video></div>
+            <h3>2.4 million views</h3><span class="len tc">0:09</span>
+            <p>A hair transformation, cut with an AI-assisted edit tool I built.</p>
+          </article>
+          <article data-clip="maneboard">
+            <div class="frame"><video src="media/maneboard.mp4" poster="media/maneboard.jpg" controls preload="none" playsinline></video></div>
+            <h3>Cut on the beat</h3><span class="len tc">0:10</span>
+            <p>Ten seconds, a new image stacked on every beat.</p>
+          </article>
+          <article data-clip="mane">
+            <div class="frame"><video src="media/mane.mp4" poster="media/mane.jpg" controls preload="none" playsinline></video></div>
+            <h3>Text hook</h3><span class="len tc">0:17</span>
+            <p>A before-and-after built around one line of on-screen text.</p>
+          </article>
+          <article data-clip="japan">
+            <div class="frame"><video src="media/japan.mp4" poster="media/japan.jpg" controls preload="none" playsinline></video></div>
+            <h3>Clipped from a livestream</h3><span class="len tc">0:34</span>
+            <p>Found by my clipper in a 24-hour stream, reframed to vertical, with captions timed word by word.</p>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="travel"></div>
+
+  <section class="stop" id="tools" data-stop="tools" style="--c: var(--tools)">
+    <div class="panels">
+      <div>
+        <h2 class="section-title"><i></i>Automation</h2>
+        <p class="section-note">Scripts I wrote with an AI coding assistant, so transcription, trimming and first cuts run on their own.</p>
+      </div>
+      <article class="panel" data-clip="clipper">
+        <h3 style="margin-top:6px">Rough cuts from huge footage</h3>
+        <p>My livestream clipper. It finds every moment I'm on camera in someone else's 24-hour stream and cuts each one into a clip.</p>
+        <dl class="stats">
+          <div><dt>of stream scanned</dt><dd class="tc">108 h</dd></div>
+          <div><dt>clips cut</dt><dd class="tc">394</dd></div>
+        </dl>
+        <ol class="steps">
+          <li>Learns my face from clips I've already posted.</li>
+          <li>Checks the stream about once a second and scores every face against mine.</li>
+          <li>Groups the matches into appearances and cuts each one with a few seconds of padding.</li>
+          <li>Ranks the best moments by how fast chat was moving, so I edit those first.</li>
+        </ol>
+        <figure class="scan" style="margin-left:4px;margin-right:4px">
+          <div id="scanRows"></div>
+          <figcaption class="scan-key">
+            <span><i style="background: var(--tools)"></i>I'm on camera</span>
+            <span>Each sliver is five minutes of stream.</span>
+          </figcaption>
+        </figure>
+      </article>
+      <article class="panel">
+        <h3 style="margin-top:6px">Talking head to rough cut</h3>
+        <p>Turns a raw recording into a rough cut with graphics already placed. That's how the panel cut and my course videos started.</p>
+        <ol class="steps">
+          <li>Transcribes the recording word by word with Whisper.</li>
+          <li>Trims long pauses and dead air automatically.</li>
+          <li>Cuts me out of the background so graphics can sit behind or beside me.</li>
+          <li>Places each card on the word it belongs to, then I tune the timing by hand.</li>
+        </ol>
+      </article>
+    </div>
+  </section>
+
+  <div class="travel"></div>
+
+  <section class="stop dark" id="trailer" data-stop="trailer" style="--c: var(--trailer)">
+    <div class="panels">
+      <div>
+        <h2 class="section-title"><i></i>Trailer</h2>
+        <p class="section-note">A test trailer for a game I'm making.</p>
+      </div>
+      <article class="panel" data-clip="ronin">
+        <div class="frame"><video src="media/ronin.mp4" poster="media/ronin.jpg" controls preload="none" playsinline></video></div>
+        <h3>Rōnin test trailer</h3><span class="len tc">0:31</span>
+        <p>Rōnin is my samurai game, and it's extremely early in development. This is a test trailer: an animation render I made in Godot, staged and filmed with the game's own cameras, then cut to the action. The characters on this page come from it.</p>
+        <ul class="did">
+          <li>Characters modelled with AI 3D tools, rigged in Mixamo</li>
+          <li><b>Made with</b> Godot, Tripo, Mixamo</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+
+  <div class="travel"></div>
+
+  <section class="stop about right" id="about" data-stop="about">
+    <div class="panels">
+      <article class="panel">
+        <h2 class="section-title" style="font-size:44px;margin:6px 4px 10px">About</h2>
+        <p>I'm a student at Cal State Fullerton who edits for my own TikTok and for a course I made. I care about pacing most: cutting until nothing is left that the viewer would skip. I like working from rough ideas, showing early cuts and turning feedback around fast.</p>
+        <p>I've edited since middle school, when I posted 45 gaming videos to <a href="https://www.youtube.com/@samurairamen4437">YouTube</a>, cut in Premiere Pro and After Effects with thumbnails made in Photoshop. Today I also use CapCut, and I'm happiest when part of the job can be turned into a script. The path you just walked is built from my game's models and animations, running in three.js.</p>
+        <dl>
+          <dt>Editing</dt><dd>Premiere Pro, After Effects, CapCut</dd>
+          <dt>Design</dt><dd>Photoshop</dd>
+          <dt>Code-driven video</dt><dd>Remotion, ffmpeg, Python</dd>
+          <dt>Web and 3D</dt><dd>three.js, Godot</dd>
+          <dt>AI tools</dt><dd>Whisper, ElevenLabs, Tripo</dd>
+          <dt>My accounts</dt><dd><a href="https://www.tiktok.com/@samurairamen1">TikTok @samurairamen1</a>, 46.2K followers<br><a href="https://www.instagram.com/samurairamen2/">Instagram @samurairamen2</a>, 27.3K followers</dd>
+        </dl>
+        <p class="avail">Available to start right away.</p>
+        <p class="contact"><a href="mailto:eugenetomita@gmail.com">eugenetomita@gmail.com</a></p>
+        <p class="simple">Slow computer? <a href="flat.html">Open the simple version</a> without 3D.</p>
+      </article>
+    </div>
+    <div class="end"></div>
+  </section>
+</main>
+
+<nav class="timeline" aria-label="Timeline of all work">
+  <div class="tl-readout"><b class="tc" id="tlTc">00:00:00:00</b><span id="tlName">Start</span></div>
+  <div class="tl-body">
+    <div class="tl-ruler" id="tlRuler"></div>
+    <div class="tl-track" id="tlTrack"></div>
+    <div class="tl-head" id="tlHead"></div>
+  </div>
+</nav>
+
+<script src="scan-data.js"></script>
+<script src="js/page.js?v=55"></script>
+<script type="module">
+import * as THREE from "three";
+import { createWorld, startLoop } from "./js/scene.js?v=52";
+import { startSound } from "./js/sound.js?v=51";
+startSound(document.getElementById("sound"));
+
+const loader = document.getElementById("loader");
+const bar = loader.querySelector("i");
+const finish = () => loader.classList.add("done");
+
+try {
+  const w = await createWorld(document.getElementById("world"), p => bar.style.setProperty("--p", p));
+  // camera targets come from where each section sits on the page
+  const sections = [...document.querySelectorAll("[data-stop]")];
+  const stopOf = {};
+  w.worlds.forEach((W, i) => W.poses.forEach(p => { stopOf[p.id] = { i, p }; }));
+  const ease = t => t * t * (3 - 2 * t);
+  const fwd = new THREE.Vector3();
+  const anchors = () => {
+    const out = [];
+    const vh = innerHeight;
+    sections.forEach((el, k) => {
+      const { i, p } = stopOf[el.dataset.stop];
+      const top = el.offsetTop, bottom = top + el.offsetHeight;
+      fwd.subVectors(p.look, p.pos).setY(0).normalize();
+      const drift = Math.min(1.6, el.offsetHeight / vh * 0.35); // creep forward while reading a long section
+      const y0 = i === 0 ? 0 : top - vh * 0.35, y1 = Math.max(y0 + 1, bottom - vh * 0.75);
+      const ks = w.worlds[i].kuroStop;
+      out.push({ y: y0, pos: p.pos.clone(), look: p.look.clone(), stop: i, kuro: ks.at, kact: ks });
+      out.push({ y: y1, pos: p.pos.clone().addScaledVector(fwd, drift), look: p.look.clone().addScaledVector(fwd, drift), stop: i, kuro: ks.at, kact: ks });
+      // between sections: line up in front of the gate, then walk through it
+      const W = w.worlds[i], nextEl = sections[k + 1];
+      if (W.approach && nextEl) {
+        const y2 = nextEl.offsetTop - vh * 0.35;
+        out.push({ y: y1 + (y2 - y1) * 0.38, pos: W.approach.pos.clone(), look: W.approach.look.clone(), stop: i, kuro: W.kuroApproach });
+        out.push({ y: y1 + (y2 - y1) * 0.7, pos: W.through.pos.clone(), look: W.through.look.clone(), stop: i + 1, kuro: W.kuroThrough });
+      }
+    });
+    return out;
+  };
+  let A = anchors();
+  addEventListener("resize", () => { A = anchors(); });
+  const target = { pos: new THREE.Vector3(), look: new THREE.Vector3(), stop: 0, kuro: new THREE.Vector3(), kact: null, kdir: new THREE.Vector3(0, 0, -1) };
+  const getTarget = () => {
+    const y = scrollY;
+    let a = A[0], b = A[0];
+    for (let i = 0; i < A.length - 1; i++) { if (y >= A[i].y) { a = A[i]; b = A[i + 1]; } }
+    if (y >= A[A.length - 1].y) a = b = A[A.length - 1];
+    const t = a === b ? 0 : ease(Math.min(1, Math.max(0, (y - a.y) / (b.y - a.y))));
+    target.pos.lerpVectors(a.pos, b.pos, t);
+    target.look.lerpVectors(a.look, b.look, t);
+    target.stop = t < 0.5 ? a.stop : b.stop;
+    // Kurō: on the same path, a few steps ahead; at a stop, who he's there to see
+    target.kuro.lerpVectors(a.kuro, b.kuro, t);
+    if (a.kuro.distanceTo(b.kuro) > 0.5) target.kdir.subVectors(b.kuro, a.kuro).setY(0).normalize(); // the way forward along the path
+    target.kact = a.kact && a.kact === b.kact ? a.kact : t < 0.02 ? a.kact || null : t > 0.98 ? b.kact || null : null;
+    return target;
+  };
+  window.__anchors = () => A;
+  window.__world = w;
+  startLoop(w, getTarget);
+  setTimeout(finish, 250);
+} catch (err) {
+  console.error(err);
+  document.getElementById("loadText").textContent = "3D didn't load on this device.";
+  setTimeout(finish, 1200);
+}
+</script>
+</body>
+</html>

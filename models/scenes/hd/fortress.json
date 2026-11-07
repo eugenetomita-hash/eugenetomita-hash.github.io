@@ -1,0 +1,127 @@
+{
+  "center_world": [
+    6500.0,
+    0.0,
+    0.0
+  ],
+  "characters_left_out": [
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1340",
+      "pos": [
+        -18.32,
+        1.2,
+        -7.1
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1341",
+      "pos": [
+        -18.48,
+        1.2,
+        -6.92
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1347",
+      "pos": [
+        -18.35,
+        1.2,
+        0.09
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1348",
+      "pos": [
+        -18.51,
+        1.2,
+        0.07
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1354",
+      "pos": [
+        -18.36,
+        1.2,
+        6.98
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1355",
+      "pos": [
+        -18.41,
+        1.2,
+        6.92
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1361",
+      "pos": [
+        18.33,
+        1.2,
+        -7.07
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1362",
+      "pos": [
+        18.49,
+        1.2,
+        -7.07
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1368",
+      "pos": [
+        18.41,
+        1.2,
+        -0.04
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1369",
+      "pos": [
+        18.35,
+        1.2,
+        0.08
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1375",
+      "pos": [
+        18.49,
+        1.2,
+        6.91
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@1376",
+      "pos": [
+        18.4,
+        1.2,
+        6.89
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@Camera3D@2301",
+      "pos": [
+        0.0,
+        14.0,
+        50.0
+      ]
+    }
+  ],
+  "radius": 70.0
+}

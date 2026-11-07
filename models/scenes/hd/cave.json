@@ -1,0 +1,118 @@
+{
+  "center_world": [
+    -5880.0,
+    -11.0,
+    -2986.0
+  ],
+  "characters_left_out": [
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@3122",
+      "pos": [
+        -16.0,
+        2.82,
+        0.0
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@3166",
+      "pos": [
+        8.2,
+        2.02,
+        4.38
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@3170",
+      "pos": [
+        2.02,
+        2.02,
+        9.85
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@3174",
+      "pos": [
+        -5.67,
+        2.02,
+        7.9
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@3178",
+      "pos": [
+        -5.67,
+        2.02,
+        -7.9
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@3182",
+      "pos": [
+        2.02,
+        2.02,
+        -9.85
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@3186",
+      "pos": [
+        8.2,
+        2.02,
+        -4.38
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@3191",
+      "pos": [
+        5.8,
+        1.05,
+        -3.4
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@3196",
+      "pos": [
+        5.8,
+        1.05,
+        3.4
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@3638",
+      "pos": [
+        0.5,
+        0.15,
+        -4.4
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@GPUParticles3D@3639",
+      "pos": [
+        0.5,
+        0.15,
+        -4.4
+      ]
+    },
+    {
+      "facing_deg_y": 0.0,
+      "name": "@CPUParticles3D@3654",
+      "pos": [
+        0.5,
+        0.0,
+        -4.4
+      ]
+    }
+  ],
+  "radius": 22.0
+}

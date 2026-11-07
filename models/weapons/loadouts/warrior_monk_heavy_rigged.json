@@ -1,0 +1,64 @@
+[
+  {
+    "bone": "mixamorigRightHand",
+    "glb": "weapons/naginata.glb",
+    "pos": [
+      0.2254,
+      -0.06682,
+      -0.16123
+    ],
+    "quat": [
+      0.14884,
+      0.19829,
+      0.54489,
+      0.80102
+    ],
+    "scale": [
+      0.84734,
+      0.84734,
+      0.84734
+    ]
+  },
+  {
+    "bone": "mixamorigRightHand",
+    "glb": "weapons/yari.glb",
+    "pos": [
+      0.3006,
+      -0.08793,
+      -0.19615
+    ],
+    "quat": [
+      -0.53767,
+      0.80706,
+      0.14348,
+      -0.19743
+    ],
+    "scale": [
+      1.48908,
+      1.48908,
+      1.48908
+    ],
+    "set": "yari"
+  },
+  {
+    "bone": "mixamorigSpine2",
+    "glb": "weapons/sashimono_warrior_monk_heavy.glb",
+    "pos": [
+      -0.11206,
+      0.161,
+      -0.00377
+    ],
+    "quat": [
+      0.00666,
+      0.67603,
+      0.02892,
+      0.73627
+    ],
+    "scale": [
+      0.56096,
+      0.56096,
+      0.56096
+    ],
+    "set": "sashimono"
+  }
+]

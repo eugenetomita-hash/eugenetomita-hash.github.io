@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Eugene Tomita, video editor</title>
+<meta name="description" content="Video editor for YouTube, shorts and talks: a six-minute cut of an hour-long panel, viral shorts (6.7M views), and the scripts that make rough cuts on their own.">
+<!-- link preview -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="Eugene Tomita, video editor">
+<meta property="og:description" content="Video editor for YouTube, shorts and talks: a six-minute cut of an hour-long panel, viral shorts (6.7M views), and the scripts that make rough cuts on their own.">
+<meta property="og:url" content="https://eugenetomita-hash.github.io/flat.html">
+<meta property="og:image" content="https://eugenetomita-hash.github.io/media/share.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#fff4e2">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Shippori+Mincho+B1:wght@600;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* The same print as the 3D path, laid flat: cream paper, woodblock-indigo ink, the red of the sun
+   for what you can press, and each section's name set down the side in Japanese. */
+:root {
+  --paper: #fff4e2;
+  --paper-2: #f6e9d2;   /* a darker sheet, for the tool cards */
+  --ink: #1d3a6e;
+  --deep: #13264a;
+  --soft: #3f5f96;
+  --rule: rgba(29, 58, 110, .28);
+  --sun: #d8432f;
+  --long: #22427a;
+  --trailer: #b0782a;
+  --short: #d8432f;
+  --tools: #3f7a5c;
+  --tl-h: 64px;
+  --wrap: 1120px;
+  --gut: clamp(20px, 5vw, 64px);
+  --serif: "Shippori Mincho B1", "Hiragino Mincho ProN", "Yu Mincho", serif;
+  --sans: "Zen Kaku Gothic New", "Hiragino Sans", system-ui, sans-serif;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { scroll-behavior: smooth; background: var(--paper); }
+body {
+  margin: 0; color: var(--ink);
+  font: 400 17px/1.7 var(--sans);
+  -webkit-font-smoothing: antialiased;
+  padding-bottom: var(--tl-h);
+  /* paper fibre */
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .11 0 0 0 0 .23 0 0 0 0 .43 0 0 0 .05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    var(--paper);
+}
+a { color: inherit; text-decoration-color: var(--sun); text-decoration-thickness: 2px; text-underline-offset: 4px; }
+a:hover { color: var(--sun); }
+:focus-visible { outline: 2px solid var(--sun); outline-offset: 4px; }
+video { display: block; width: 100%; background: #0d1422; }
+.tc { font-variant-numeric: tabular-nums; }
+
+/* ---------- top bar ---------- */
+.bar {
+  position: relative; z-index: 5;
+  display: flex; justify-content: space-between; align-items: baseline;
+  padding: 22px var(--gut); font-size: 15px; font-weight: 700;
+}
+.bar > span { font: 800 20px/1 var(--serif); color: var(--deep); }
+.bar nav { display: flex; gap: 26px; }
+.bar a { text-decoration: none; }
+
+/* ---------- hero: the name under a red sun, the reel framed below ---------- */
+.hero { position: relative; max-width: var(--wrap); margin: 0 auto; padding: clamp(40px, 8vh, 90px) var(--gut) 0; }
+.hero-copy { position: relative; isolation: isolate; text-align: center; }
+.hero-copy::before { /* the sun */
+  content: ""; position: absolute; z-index: -1; left: 50%; top: 0;
+  width: clamp(170px, 24vw, 320px); aspect-ratio: 1; border-radius: 50%;
+  background: var(--sun); opacity: .88; transform: translate(-50%, -18%);
+}
+.hero h1 { margin: 0; color: var(--deep); font: 800 clamp(64px, 11vw, 170px)/.95 var(--serif); letter-spacing: -.025em; }
+.watch { display: inline-block; margin-top: 18px; font: 800 18px/1.3 var(--serif); color: var(--sun); text-decoration: none; border-bottom: 2px solid var(--sun); padding-bottom: 2px; }
+.watch::before { content: ""; display: inline-block; margin-right: 10px; border-left: 11px solid currentColor; border-top: 7px solid transparent; border-bottom: 7px solid transparent; vertical-align: -1px; }
+#panel-cut { scroll-margin-top: 80px; }
+.watch:hover { color: var(--deep); border-color: var(--deep); }
+.hero p { margin: 28px auto 0; max-width: 30ch; font: 600 clamp(19px, 1.9vw, 24px)/1.45 var(--serif); color: var(--deep); }
+.hero video { margin-top: clamp(40px, 6vh, 64px); aspect-ratio: 16 / 9; object-fit: cover; border: 1px solid var(--ink); box-shadow: 8px 8px 0 rgba(29, 58, 110, .12); }
+.reel-tc { margin-top: 12px; display: flex; justify-content: space-between; font-size: 13px; color: var(--soft); }
+.reel-tc b { font-weight: 500; color: var(--deep); }
+
+/* ---------- sections ---------- */
+main { padding: 0 var(--gut); }
+.group { max-width: var(--wrap); margin: 0 auto; padding-top: clamp(90px, 13vw, 160px); }
+.group-head { position: relative; display: flex; align-items: baseline; gap: 16px; margin-bottom: 48px; padding-bottom: 18px; border-bottom: 2px solid var(--ink); }
+.group-head::after { content: ""; position: absolute; left: 0; right: 0; bottom: -7px; height: 1px; background: var(--ink); opacity: .55; } /* the print's double rule */
+.group-head h2 { margin: 0; font: 800 clamp(40px, 5.6vw, 76px)/1 var(--serif); color: var(--deep); letter-spacing: -.02em; }
+/* the section's name in Japanese, down the side in the sun's red */
+.group-head .swatch { flex: none; align-self: center; background: none !important; font: 600 17px/1 var(--serif); writing-mode: vertical-rl; color: var(--sun); letter-spacing: .15em; }
+#long .swatch::before { content: "長編"; }
+#short .swatch::before { content: "短編"; }
+#tools .swatch::before { content: "道具"; }
+#trailer .swatch::before { content: "予告"; }
+.group-head p { margin: 0 0 0 auto; max-width: 34ch; text-align: right; font: 600 18px/1.5 var(--serif); color: var(--ink); }
+
+/* long pieces */
+.piece { margin-bottom: clamp(70px, 9vw, 110px); }
+.piece:last-child { margin-bottom: 0; }
+.frame { position: relative; background: #0d1422; border: 1px solid var(--ink); box-shadow: 8px 8px 0 rgba(29, 58, 110, .12); }
+.wide .frame video { aspect-ratio: 16 / 9; }
+.notes {
+  display: grid; grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr) minmax(0, .8fr); gap: 36px;
+  padding-top: 30px;
+}
+.notes h3 { margin: 0 0 4px; font: 800 30px/1.2 var(--serif); color: var(--deep); }
+.notes .len { color: var(--soft); font-size: 14px; }
+.notes p { margin: 10px 0 0; max-width: 48ch; }
+.notes h4 { margin: 4px 0 8px; font: 600 15px/1.3 var(--serif); color: var(--soft); }
+.notes ul { margin: 0; padding: 0; list-style: none; }
+.notes li { position: relative; padding: 7px 0 7px 18px; border-top: 1px solid var(--rule); font-size: 15px; line-height: 1.5; }
+.notes li::before { content: ""; position: absolute; left: 0; top: 1.05em; width: 8px; height: 2px; background: var(--c); }
+.notes li:last-child { border-bottom: 1px solid var(--rule); }
+
+/* what I kept from the full recording */
+.cutbar { margin: 16px 0 4px; }
+.cutbar-track { position: relative; height: 16px; background: rgba(29, 58, 110, .13); }
+.cutbar-track i { position: absolute; top: 0; bottom: 0; min-width: 2px; background: var(--sun); }
+.cutbar-ticks { position: relative; height: 16px; }
+.cutbar-ticks em { position: absolute; top: 3px; font: 600 11px/1 var(--serif); font-style: normal; color: var(--soft); transform: translateX(-50%); }
+.cutbar-ticks em:first-child { transform: none; }
+.cutbar figcaption { margin-top: 4px; font-size: 14px; line-height: 1.5; color: var(--soft); max-width: 60ch; }
+
+/* shorts */
+.shorts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(18px, 2.8vw, 38px); }
+.shorts .frame video { aspect-ratio: 9 / 16; }
+.shorts h3 { margin: 20px 0 2px; font: 800 21px/1.25 var(--serif); color: var(--deep); }
+.shorts-head { grid-column: 1 / -1; margin: 0; font: 600 16px/1.4 var(--serif); color: var(--soft); }
+.shorts-head:not(:first-child) { margin-top: 30px; }
+.shorts .len { color: var(--soft); font-size: 14px; }
+.shorts p { margin: 8px 0 0; font-size: 15px; line-height: 1.6; }
+
+/* tools */
+.tool { background: var(--paper-2); border: 1px solid var(--ink); padding: clamp(24px, 4vw, 48px); margin-bottom: 30px; }
+.tool-top { display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 40px; align-items: start; }
+.tool h3 { margin: 0; font: 800 32px/1.2 var(--serif); color: var(--deep); }
+.tool .lede { margin: 10px 0 0; font-size: 18px; line-height: 1.55; max-width: 40ch; }
+.stats { display: flex; gap: 36px; margin: 28px 0 0; }
+.stats div { display: flex; flex-direction: column-reverse; }
+.stats dt { color: var(--soft); font-size: 14px; }
+.stats dd { margin: 0; font: 800 50px/1 var(--serif); color: var(--tools); }
+.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 30px 1fr; gap: 8px; padding: 10px 0; border-top: 1px solid var(--rule); font-size: 15.5px; line-height: 1.55; }
+.steps li::before { content: counter(s); font: 800 17px/1.4 var(--serif); color: var(--tools); }
+.scan { margin-top: 36px; }
+.scan-row { display: grid; grid-template-columns: 92px 1fr; gap: 14px; align-items: center; margin-bottom: 10px; }
+.scan-row span { font-size: 13px; color: var(--soft); line-height: 1.3; }
+.scan-row canvas { width: 100%; height: 30px; display: block; background: rgba(29, 58, 110, .1); }
+.scan-key { display: flex; gap: 22px; font-size: 13px; color: var(--soft); margin: 14px 0 0 106px; }
+.scan-key i { display: inline-block; width: 10px; height: 10px; margin-right: 7px; vertical-align: -1px; }
+
+/* about */
+.about { display: grid; grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr); gap: 48px; padding-bottom: clamp(80px, 10vw, 140px); }
+.about .group-head { grid-column: 1 / -1; margin-bottom: 8px; }
+.about p { margin: 0 0 16px; font-size: 18px; line-height: 1.65; max-width: 52ch; }
+.about dl { margin: 0; }
+.about dt { font: 600 15px/1.3 var(--serif); color: var(--soft); margin-top: 18px; }
+.about dt:first-child { margin-top: 0; }
+.about dd { margin: 4px 0 0; font-size: 17px; }
+.contact a { font: 800 clamp(22px, 2.6vw, 30px)/1.3 var(--serif); color: var(--deep); }
+.contact a:hover { color: var(--sun); }
+.avail { margin: 22px 0 0 !important; font-weight: 700; color: var(--sun); }
+.avail + .contact { margin-top: 2px !important; }
+
+/* ---------- timeline: the same strip as the 3D page ---------- */
+.timeline {
+  position: fixed; left: 0; right: 0; bottom: 0; z-index: 20; height: var(--tl-h);
+  background: rgba(255, 244, 226, .95); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px);
+  color: var(--ink); border-top: 2px solid var(--ink);
+  display: grid; grid-template-columns: 150px 1fr; font-size: 13px;
+}
+.timeline::before { content: ""; position: absolute; left: 0; right: 0; top: -6px; height: 1px; background: var(--ink); opacity: .55; }
+.tl-readout { display: flex; flex-direction: column; justify-content: center; padding: 0 16px; border-right: 1px solid var(--ink); }
+.tl-readout b { font: 500 14px/1.2 var(--sans); letter-spacing: .02em; color: var(--deep); }
+.tl-readout span { font: 600 13px/1.4 var(--serif); color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tl-body { position: relative; margin: 0 18px; }
+.tl-ruler { position: absolute; left: 0; right: 0; top: 0; height: 20px; }
+.tl-ruler i { position: absolute; top: 0; width: 1px; height: 4px; background: var(--ink); opacity: .4; }
+.tl-ruler i.major { height: 8px; opacity: 1; }
+.tl-ruler em { position: absolute; top: 7px; font: 600 10.5px/1 var(--serif); font-style: normal; color: var(--soft); transform: translateX(3px); }
+.tl-track { position: absolute; left: 0; right: 0; top: 23px; height: 30px; }
+.tl-clip {
+  position: absolute; top: 0; height: 100%; margin: 0; padding: 0 0 0 8px;
+  background: transparent; border: 1px solid var(--ink); border-right-width: 0;
+  color: var(--ink); cursor: pointer;
+  font: 600 12px/28px var(--serif); text-align: left; overflow: hidden; white-space: nowrap;
+}
+.tl-clip:last-child { border-right-width: 1px; }
+.tl-clip:hover { background: rgba(29, 58, 110, .1); }
+.tl-clip.on { background: var(--ink); color: var(--paper); }
+.tl-cut { position: absolute; bottom: 0; width: 1px; height: 9px; background: currentColor; opacity: .55; pointer-events: none; }
+.tl-head { position: absolute; top: 0; bottom: 6px; width: 0; left: 0; pointer-events: none; will-change: transform; }
+.tl-head::before { content: ""; position: absolute; left: -1px; top: 0; bottom: 0; width: 2px; background: var(--sun); }
+.tl-head::after { content: ""; position: absolute; left: -5px; top: 0; width: 10px; height: 10px; border-radius: 50%; background: var(--sun); }
+
+/* ---------- responsive ---------- */
+@media (max-width: 900px) {
+  .notes { grid-template-columns: 1fr 1fr; }
+  .notes > :first-child { grid-column: 1 / -1; }
+  .tool-top, .about { grid-template-columns: 1fr; gap: 28px; }
+  .group-head { flex-wrap: wrap; }
+  .group-head p { margin: 0; text-align: left; flex-basis: 100%; }
+}
+@media (max-width: 640px) {
+  :root { --tl-h: 54px; }
+  .bar nav a:not(:last-child) { display: none; }
+  .notes { grid-template-columns: 1fr; gap: 20px; }
+  .shorts { grid-template-columns: 1fr; max-width: 340px; margin: 0 auto; }
+  .timeline { grid-template-columns: 92px 1fr; }
+  .tl-readout b { font-size: 12px; }
+  .tl-readout span, .tl-ruler em { display: none; }
+  .tl-body { margin: 0 10px; }
+  .tl-track { top: 14px; height: 26px; }
+  .tl-clip { font-size: 0; }
+  .scan-row { grid-template-columns: 1fr; gap: 4px; }
+  .scan-key { margin-left: 0; flex-wrap: wrap; }
+  .stats dd { font-size: 38px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+</style>
+</head>
+<body>
+
+<header class="bar">
+  <span>Eugene Tomita</span>
+  <nav aria-label="Sections">
+    <a href="#long">Long form</a>
+    <a href="#short">Short form</a>
+    <a href="#tools">Automation</a>
+    <a href="#trailer">Trailer</a>
+    <a href="#about">Contact</a>
+  </nav>
+</header>
+
+<section class="hero" aria-label="Showreel">
+  <div class="hero-copy">
+    <h1>Eugene<br>Tomita</h1>
+    <p>Video editor for YouTube, shorts and talks. I write the code that does the slow parts for me.</p>
+    <a class="watch" href="#panel-cut">Watch the six-minute panel cut</a>
+  </div>
+  <video id="reel" src="media/reel.mp4" poster="media/ronin.jpg" muted loop playsinline autoplay preload="auto" aria-hidden="true"></video>
+  <div class="reel-tc tc" aria-hidden="true">Showreel<b id="reelTc">00:00:00:00</b></div>
+</section>
+
+<main>
+
+  <section class="group" id="long" style="--c: var(--long)">
+    <div class="group-head">
+      <span class="swatch" style="background: var(--long)"></span>
+      <h2>Long form</h2>
+      <p>YouTube-length videos, paced to hold attention from start to finish.</p>
+    </div>
+
+    <article class="piece wide" id="panel-cut" data-clip="panel">
+      <div class="frame"><video src="media/panel.mp4" poster="media/panel.jpg" controls preload="none" playsinline></video></div>
+      <div class="notes">
+        <div>
+          <h3>An hour-long panel cut to six minutes</h3>
+          <span class="len tc">6:14</span>
+          <p>A 63-minute panel on AI and security, filmed on one wide camera, cut down to its strongest six minutes. Each speaker gets a close-up, and chapter cards, quotes, numbers and pictures land on the points they make.</p>
+          <figure class="cutbar">
+            <div class="cutbar-track" role="img" aria-label="The 63-minute recording, with the 15 stretches kept for the six-minute cut marked"><i style="left:1.54%;width:0.47%"></i><i style="left:2.88%;width:0.49%"></i><i style="left:3.44%;width:0.49%"></i><i style="left:6.89%;width:0.63%"></i><i style="left:9.42%;width:0.77%"></i><i style="left:11.69%;width:1.03%"></i><i style="left:13.11%;width:0.62%"></i><i style="left:24.64%;width:0.31%"></i><i style="left:25.31%;width:0.47%"></i><i style="left:27.60%;width:0.82%"></i><i style="left:31.45%;width:0.58%"></i><i style="left:33.09%;width:0.87%"></i><i style="left:43.06%;width:0.75%"></i><i style="left:93.50%;width:1.00%"></i><i style="left:99.23%;width:0.08%"></i></div>
+            <div class="cutbar-ticks" aria-hidden="true"><em style="left:0.00%">0:00</em><em style="left:23.59%">15:00</em><em style="left:47.18%">30:00</em><em style="left:70.77%">45:00</em><em style="left:94.35%">60:00</em></div>
+            <figcaption>The full 63-minute recording. In red, the 15 stretches I kept. The opening comes from minute 8, moved to the front as a hook.</figcaption>
+          </figure>
+        </div>
+        <div>
+          <h4>What I did</h4>
+          <ul>
+            <li>First cut made by script from the transcript, then tightened by hand</li>
+            <li>Speakers cut out of the background, lower-thirds and chapter cards</li>
+            <li>The thumbnail you see here</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Made with</h4>
+          <ul><li>Python</li><li>Whisper</li><li>ffmpeg</li></ul>
+        </div>
+      </div>
+    </article>
+
+    <article class="piece wide" data-clip="low">
+      <div class="frame"><video src="media/low.mp4" poster="media/low.jpg" controls preload="none" playsinline></video></div>
+      <div class="notes">
+        <div>
+          <h3>All motion graphics</h3>
+          <span class="len tc">2:24</span>
+          <p>A voiceover with no camera footage. Every frame is type and animation I built around the narration.</p>
+        </div>
+        <div>
+          <h4>What I did</h4>
+          <ul>
+            <li>Full-frame type and layout for every line</li>
+            <li>A custom meter graphic</li>
+            <li>Audio re-synced to the picture to the millisecond</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Made with</h4>
+          <ul><li>Remotion</li><li>Whisper</li></ul>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="group" id="short" style="--c: var(--short)">
+    <div class="group-head">
+      <span class="swatch" style="background: var(--short)"></span>
+      <h2>Short form</h2>
+      <p>Vertical edits for social, where the first second decides everything.</p>
+    </div>
+    <div class="shorts">
+      <p class="shorts-head">Three shorts cut from one hour-long panel on AI and security.</p>
+      <article data-clip="garbage">
+        <div class="frame"><video src="media/garbage.mp4" poster="media/garbage.jpg" controls preload="none" playsinline></video></div>
+        <h3>Panel to vertical</h3>
+        <span class="len tc">0:49</span>
+        <p>Shot on one wide, static camera. I reframed each speaker to a close-up and cut them out of the background.</p>
+      </article>
+      <article data-clip="criminal">
+        <div class="frame"><video src="media/criminal.mp4" poster="media/criminal.jpg" controls preload="none" playsinline></video></div>
+        <h3>A picture on every point</h3>
+        <span class="len tc">0:48</span>
+        <p>Cards pop in on the word they illustrate, so there's always something new on screen.</p>
+      </article>
+      <article data-clip="hacker">
+        <div class="frame"><video src="media/hacker.mp4" poster="media/hacker.jpg" controls preload="none" playsinline></video></div>
+        <h3>Headline hook</h3>
+        <span class="len tc">0:31</span>
+        <p>A two-line title holds the opening seconds, then hands off to small, clean captions.</p>
+      </article>
+      <p class="shorts-head">Edits for my own accounts: 46.2K followers and 4M likes on <a href="https://www.tiktok.com/@samurairamen1">TikTok</a>, 27.3K followers on <a href="https://www.instagram.com/samurairamen2/">Instagram</a>.</p>
+      <article data-clip="glowup">
+        <div class="frame"><video src="media/glowup.mp4" poster="media/glowup.jpg" controls preload="none" playsinline></video></div>
+        <h3>6.7 million views</h3>
+        <span class="len tc">0:10</span>
+        <p>A before-and-after glow-up, cut so the switch lands right on the beat.</p>
+      </article>
+      <article data-clip="hair">
+        <div class="frame"><video src="media/hair.mp4" poster="media/hair.jpg" controls preload="none" playsinline></video></div>
+        <h3>2.4 million views</h3>
+        <span class="len tc">0:09</span>
+        <p>A hair transformation, cut with an AI-assisted edit tool I built.</p>
+      </article>
+      <article data-clip="maneboard">
+        <div class="frame"><video src="media/maneboard.mp4" poster="media/maneboard.jpg" controls preload="none" playsinline></video></div>
+        <h3>Cut on the beat</h3>
+        <span class="len tc">0:10</span>
+        <p>Ten seconds, a new image stacked on every beat.</p>
+      </article>
+      <article data-clip="mane">
+        <div class="frame"><video src="media/mane.mp4" poster="media/mane.jpg" controls preload="none" playsinline></video></div>
+        <h3>Text hook</h3>
+        <span class="len tc">0:17</span>
+        <p>A before-and-after built around one line of on-screen text.</p>
+      </article>
+      <article data-clip="japan">
+        <div class="frame"><video src="media/japan.mp4" poster="media/japan.jpg" controls preload="none" playsinline></video></div>
+        <h3>Clipped from a livestream</h3>
+        <span class="len tc">0:34</span>
+        <p>Found by my clipper below in a 24-hour stream, reframed to vertical, with captions timed word by word.</p>
+      </article>
+    </div>
+  </section>
+
+  <section class="group" id="tools" style="--c: var(--tools)">
+    <div class="group-head">
+      <span class="swatch" style="background: var(--tools)"></span>
+      <h2>Automation</h2>
+      <p>Scripts I wrote with an AI coding assistant, so transcription, trimming and first cuts run on their own.</p>
+    </div>
+
+    <article class="tool" data-clip="clipper">
+      <div class="tool-top">
+        <div>
+          <h3>Rough cuts from huge footage</h3>
+          <p class="lede">My livestream clipper. It finds every moment I'm on camera in someone else's 24-hour stream and cuts each one into a clip.</p>
+          <dl class="stats">
+            <div><dt>of stream scanned</dt><dd class="tc">108 h</dd></div>
+            <div><dt>clips cut</dt><dd class="tc">394</dd></div>
+          </dl>
+        </div>
+        <ol class="steps">
+          <li>Learns my face from clips I've already posted.</li>
+          <li>Checks the stream about once a second and scores every face against mine.</li>
+          <li>Groups the matches into appearances and cuts each one with a few seconds of padding.</li>
+          <li>Ranks the best moments by how fast chat was moving, so I edit those first.</li>
+        </ol>
+      </div>
+      <figure class="scan" style="margin-left:0;margin-right:0">
+        <div id="scanRows"></div>
+        <figcaption class="scan-key">
+          <span><i style="background: var(--tools)"></i>I'm on camera</span>
+          <span><i style="background: #c4cad1"></i>a face that isn't me</span>
+          <span>Each sliver is five minutes of stream.</span>
+        </figcaption>
+      </figure>
+    </article>
+
+    <article class="tool">
+      <div class="tool-top">
+        <div>
+          <h3>Talking head to rough cut</h3>
+          <p class="lede">Turns a raw talking-head recording into a rough cut with graphics already placed. That's how the panel cut and my course videos started.</p>
+        </div>
+        <ol class="steps">
+          <li>Transcribes the recording word by word with Whisper.</li>
+          <li>Trims long pauses and dead air automatically.</li>
+          <li>Cuts me out of the background so graphics can sit behind or beside me.</li>
+          <li>Places each card on the exact word it belongs to, then I tune the timing by hand.</li>
+        </ol>
+      </div>
+    </article>
+  </section>
+
+  <section class="group" id="trailer" style="--c: var(--trailer)">
+    <div class="group-head">
+      <span class="swatch" style="background: var(--trailer)"></span>
+      <h2>Trailer</h2>
+      <p>A test trailer for a game I'm making.</p>
+    </div>
+    <article class="piece wide" data-clip="ronin">
+      <div class="frame"><video src="media/ronin.mp4" poster="media/ronin.jpg" controls preload="none" playsinline></video></div>
+      <div class="notes">
+        <div>
+          <h3>Rōnin test trailer</h3>
+          <span class="len tc">0:31</span>
+          <p>Rōnin is my samurai game, and it's extremely early in development. This is a test trailer: an animation render I made in Godot, staged and filmed with the game's own cameras, then cut to the action.</p>
+        </div>
+        <div>
+          <h4>What I did</h4>
+          <ul>
+            <li>Shots staged and filmed with in-game cameras</li>
+            <li>Characters modelled with AI 3D tools, rigged in Mixamo</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Made with</h4>
+          <ul><li>Godot</li><li>Tripo</li><li>Mixamo</li></ul>
+        </div>
+      </div>
+    </article>
+  </section>
+
+  <section class="group about" id="about">
+    <div>
+      <div class="group-head"><h2>About</h2></div>
+      <p>I'm a student at Cal State Fullerton who edits for my own TikTok and for a course I made. I care about pacing most: cutting until nothing is left that the viewer would skip. I like working from rough ideas, showing early cuts and turning feedback around fast.</p>
+      <p>I've edited since middle school, when I posted 45 gaming videos to <a href="https://www.youtube.com/@samurairamen4437">YouTube</a>, cut in Premiere Pro and After Effects with thumbnails made in Photoshop. Today I also use CapCut, and I'm happiest when part of the job can be turned into a script.</p>
+      <p class="avail">Available to start right away.</p>
+      <p class="contact"><a href="mailto:eugenetomita@gmail.com">eugenetomita@gmail.com</a></p>
+    </div>
+    <dl>
+      <dt>Editing</dt><dd>Premiere Pro, After Effects, CapCut</dd>
+      <dt>Design</dt><dd>Photoshop</dd>
+      <dt>Code-driven video</dt><dd>Remotion, ffmpeg, Python</dd>
+      <dt>Web and 3D</dt><dd>three.js, Godot</dd>
+      <dt>AI tools</dt><dd>Whisper, ElevenLabs, Tripo</dd>
+      <dt>My accounts</dt><dd><a href="https://www.tiktok.com/@samurairamen1">TikTok @samurairamen1</a>, 46.2K followers<br><a href="https://www.instagram.com/samurairamen2/">Instagram @samurairamen2</a>, 27.3K followers</dd>
+    </dl>
+  </section>
+
+</main>
+
+<nav class="timeline" aria-label="Timeline of all work">
+  <div class="tl-readout"><b class="tc" id="tlTc">00:00:00:00</b><span id="tlName">Showreel</span></div>
+  <div class="tl-body">
+    <div class="tl-ruler" id="tlRuler"></div>
+    <div class="tl-track" id="tlTrack"></div>
+    <div class="tl-head" id="tlHead"></div>
+  </div>
+</nav>
+
+<script src="scan-data.js"></script>
+<script>
+(() => {
+  const FPS = 30;
+  // The timeline is grouped by what I offer, not by video: one block per kind of work, each video an
+  // edit point inside its block. Lengths are the real running times in seconds; the timecode runs on
+  // across the whole bar, but each block gets its share of width by weight so short work stays readable.
+  const GROUPS = [
+    { name: "Long form",      c: "--long",    w: 1.8, clips: [["panel", 374], ["low", 144]] },
+    { name: "Short form",     c: "--short",   w: 2, clips: [["garbage", 49], ["criminal", 48], ["hacker", 35], ["glowup", 10], ["hair", 9], ["maneboard", 10], ["mane", 17], ["japan", 34]] },
+    { name: "Automation",     c: "--tools",   w: 1,   clips: [["clipper", 60]] },
+    { name: "Trailer",        c: "--trailer", w: 1,   clips: [["ronin", 31]] },
+  ];
+  const CLIPS = [];
+  let t = 0, x = 0;
+  const W = GROUPS.reduce((a, g) => a + g.w, 0);
+  GROUPS.forEach(g => {
+    g.start = t; g.x = x / W; g.dur = g.clips.reduce((a, c) => a + c[1], 0); g.width = g.w / W;
+    let o = 0;
+    g.clips.forEach(([id, dur]) => {
+      CLIPS.push({ id, dur, g, start: t + o, off: o, el: document.querySelector(`[data-clip="${id}"]`) });
+      o += dur;
+    });
+    t += g.dur; x += g.w;
+  });
+  const TOTAL = t;
+  // where a moment (seconds into a block) sits along the bar, 0..1
+  const at = (g, sec) => g.x + g.width * Math.min(1, Math.max(0, sec / g.dur));
+
+  const tc = s => {
+    const f = Math.floor((s % 1) * FPS), whole = Math.floor(s);
+    const p = n => String(n).padStart(2, "0");
+    return `${p(Math.floor(whole / 3600))}:${p(Math.floor(whole / 60) % 60)}:${p(whole % 60)}:${p(f)}`;
+  };
+  const mmss = s => `${Math.floor(s / 60)}:${String(Math.round(s % 60)).padStart(2, "0")}`;
+
+  const ruler = document.getElementById("tlRuler"), track = document.getElementById("tlTrack");
+  GROUPS.forEach(g => {
+    // a tick every 30 s inside the block, and the block's in-point labelled with the running time
+    for (let s = 0; s < g.dur; s += 30) {
+      const i = document.createElement("i");
+      if (s === 0) i.className = "major";
+      i.style.left = (at(g, s) * 100) + "%";
+      ruler.appendChild(i);
+    }
+    const em = document.createElement("em");
+    em.textContent = mmss(g.start);
+    em.style.left = (g.x * 100) + "%";
+    ruler.appendChild(em);
+
+    const b = document.createElement("button");
+    b.className = "tl-clip";
+    b.style.left = `calc(${g.x * 100}% + 1px)`;
+    b.style.width = `calc(${g.width * 100}% - 2px)`;
+    b.style.setProperty("--c", `var(${g.c})`);
+    b.textContent = g.name;
+    b.setAttribute("aria-label", `Go to ${g.name}`);
+    const first = CLIPS.find(c => c.g === g);
+    b.addEventListener("click", () => first.el.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "center" }));
+    // the cuts between videos inside the block
+    let o = 0;
+    g.clips.slice(0, -1).forEach(([, dur]) => {
+      o += dur;
+      const cut = document.createElement("i");
+      cut.className = "tl-cut";
+      cut.style.left = (o / g.dur * 100) + "%";
+      b.appendChild(cut);
+    });
+    g.btn = b;
+    track.appendChild(b);
+  });
+
+  // playhead: follows a playing video, otherwise follows the scroll position
+  const head = document.getElementById("tlHead"), tcEl = document.getElementById("tlTc"), nameEl = document.getElementById("tlName");
+  const body = head.parentElement;
+  let playing = null;
+  const setHead = (clip, into) => {
+    const g = clip && clip.g, sec = clip ? clip.off + into : 0;
+    head.style.transform = `translateX(${(g ? at(g, sec) : 0) * body.clientWidth}px)`;
+    tcEl.textContent = tc(clip ? clip.start + into : 0);
+    nameEl.textContent = g ? g.name : "Showreel";
+    GROUPS.forEach(x => x.btn.classList.toggle("on", x === g));
+  };
+  const fromScroll = () => {
+    const mid = innerHeight * 0.5;
+    let best = null;
+    for (const c of CLIPS) {
+      const r = c.el.getBoundingClientRect();
+      if (r.top <= mid) best = { c, r };
+    }
+    if (!best) return setHead(null, 0);
+    const p = Math.min(1, Math.max(0, (mid - best.r.top) / Math.max(1, best.r.height)));
+    setHead(best.c, p * best.c.dur);
+  };
+  const tick = () => {
+    if (playing && !playing.v.paused) {
+      setHead(playing.c, Math.min(playing.v.currentTime, playing.c.dur));
+      requestAnimationFrame(tick);
+    }
+  };
+  CLIPS.forEach(c => {
+    const v = c.el.querySelector("video");
+    if (!v) return;
+    v.addEventListener("play", () => {
+      document.querySelectorAll("main video").forEach(o => { if (o !== v) o.pause(); });
+      playing = { c, v };
+      requestAnimationFrame(tick);
+    });
+    v.addEventListener("pause", () => { if (playing && playing.v === v) { playing = null; } });
+  });
+  let raf = 0;
+  addEventListener("scroll", () => {
+    if (playing && !playing.v.paused) return;
+    cancelAnimationFrame(raf); raf = requestAnimationFrame(fromScroll);
+  }, { passive: true });
+  addEventListener("resize", fromScroll);
+  fromScroll();
+
+  // hero reel timecode; respect reduced motion
+  const reel = document.getElementById("reel"), reelTc = document.getElementById("reelTc");
+  if (matchMedia("(prefers-reduced-motion: reduce)").matches) { reel.removeAttribute("autoplay"); reel.pause(); }
+  const reelTick = () => { reelTc.textContent = tc(reel.currentTime); requestAnimationFrame(reelTick); };
+  requestAnimationFrame(reelTick);
+
+  // scan strips from the clipper's real scan data
+  const rows = document.getElementById("scanRows");
+  const MATCH = 40; // the clipper's cut-off: 0.40 similarity
+  const fmt = new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" });
+  (window.SCAN || []).forEach(s => {
+    const row = document.createElement("div");
+    row.className = "scan-row";
+    const lab = document.createElement("span");
+    lab.textContent = `${fmt.format(new Date(s.start.replace(" ", "T")))}, ${Math.round(s.hours)} h`;
+    const cv = document.createElement("canvas");
+    cv.setAttribute("role", "img");
+    const on = s.bins.filter(x => x >= MATCH).length;
+    cv.setAttribute("aria-label", `${Math.round(s.hours)} hours scanned, on camera in ${on} of ${s.bins.length} five-minute stretches`);
+    row.append(lab, cv);
+    rows.appendChild(row);
+    const draw = () => {
+      // every row uses the same scale (48 h), so the strips line up by hour
+      const maxBins = Math.max(...window.SCAN.map(x => x.bins.length));
+      const dpr = devicePixelRatio || 1, w = cv.clientWidth, h = cv.clientHeight;
+      cv.width = w * dpr; cv.height = h * dpr;
+      const g = cv.getContext("2d"); g.scale(dpr, dpr);
+      const bw = w / maxBins;
+      const tools = getComputedStyle(document.documentElement).getPropertyValue("--tools").trim();
+      s.bins.forEach((v, i) => {
+        if (!v) return;
+        const x = i * bw;
+        if (v >= MATCH) { g.fillStyle = tools; g.fillRect(x, 3, Math.max(1, bw - .4), h - 6); }
+        else { g.fillStyle = "#c4cad1"; const hh = (h - 6) * (v / MATCH) * .6 + 3; g.fillRect(x, h - 3 - hh, Math.max(1, bw - .4), hh); }
+      });
+    };
+    requestAnimationFrame(draw);
+    addEventListener("resize", draw);
+  });
+})();
+</script>
+</body>
+</html>

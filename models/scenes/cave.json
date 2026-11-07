@@ -1,0 +1,78 @@
+{
+ "center_world": [
+  -5880.0,
+  -11.0,
+  -2986.0
+ ],
+ "radius": 22.0,
+ "people": [],
+ "fires_and_torches": [
+  [
+   -16.0,
+   2.82,
+   0.0
+  ],
+  [
+   8.2,
+   2.02,
+   4.38
+  ],
+  [
+   2.02,
+   2.02,
+   9.85
+  ],
+  [
+   -5.67,
+   2.02,
+   7.9
+  ],
+  [
+   -5.67,
+   2.02,
+   -7.9
+  ],
+  [
+   2.02,
+   2.02,
+   -9.85
+  ],
+  [
+   8.2,
+   2.02,
+   -4.38
+  ],
+  [
+   5.8,
+   1.05,
+   -3.4
+  ],
+  [
+   5.8,
+   1.05,
+   3.4
+  ],
+  [
+   0.5,
+   0.15,
+   -4.4
+  ],
+  [
+   0.5,
+   0.15,
+   -4.4
+  ],
+  [
+   0.5,
+   0.0,
+   -4.4
+  ]
+ ],
+ "note": "Godot/three.js axes: +Y up, metres. facing_deg_y 0 = looking down -Z, 180 = looking down +Z (rotation.y in degrees). Positions are relative to the scene centre (0,0,0).",
+ "boss_dais_centre": [
+  7.0,
+  0.6,
+  0.0
+ ],
+ "boss_dais_note": "The raised seat spans about x 4.5-9.5; it is not at the origin."
+}
