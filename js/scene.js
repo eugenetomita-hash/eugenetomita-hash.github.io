@@ -1,7 +1,7 @@
 // Six worlds joined by torii gates. Each gate shows the next world through its opening;
 // walking through it puts you there. Every world is its own scene; they share one camera.
 import * as THREE from "three";
-import { WORLDS } from "./worlds.js?v=51";
+import { WORLDS } from "./worlds.js?v=52";
 import { createKuro } from "./kuro.js?v=51";
 import { EffectComposer } from "three/addons/postprocessing/EffectComposer.js";
 import { Pass } from "three/addons/postprocessing/Pass.js";

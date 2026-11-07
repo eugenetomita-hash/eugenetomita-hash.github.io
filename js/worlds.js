@@ -3,7 +3,7 @@
 import * as THREE from "three";
 import { loadCharacter, loadProp, loadGLB, bakePose, crowd, poseAstride, placeInstances, lodBudget } from "./assets.js?v=51";
 import { mergeGeometries } from "three/addons/utils/BufferGeometryUtils.js";
-import { buildBattle } from "./battle.js?v=51";
+import { buildBattle } from "./battle.js?v=52";
 
 const A = n => `anims/${n}.fbx`;
 const V = (x, y, z) => new THREE.Vector3(x, y, z);

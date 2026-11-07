@@ -63,9 +63,10 @@ video { display: block; width: 100%; background: #0d1422; }
 .veil { display: none; }
 #loader {
   position: fixed; inset: 0; z-index: 50; display: grid; place-items: center;
-  background: #eef0f2; transition: opacity .9s ease, visibility .9s;
+  background: var(--mist); transition: transform 1s cubic-bezier(.7, 0, .2, 1), visibility 1s;
 }
-#loader.done { opacity: 0; visibility: hidden; }
+/* when the scene is fully drawn the loading screen slides down out of the way */
+#loader.done { transform: translateY(100%); visibility: hidden; }
 #loader div { text-align: center; }
 #loader strong { display: block; font: 800 clamp(36px, 6vw, 72px)/1 var(--serif); color: var(--deep); letter-spacing: -.01em; }
 #loader span { display: block; margin-top: 14px; font-size: 16px; color: var(--soft); }
@@ -478,7 +479,7 @@ main { position: relative; z-index: 2; text-shadow: var(--halo); }
 <script src="js/page.js?v=55"></script>
 <script type="module">
 import * as THREE from "three";
-import { createWorld, startLoop } from "./js/scene.js?v=52";
+import { createWorld, startLoop } from "./js/scene.js?v=53";
 import { startSound } from "./js/sound.js?v=51";
 startSound(document.getElementById("sound"));
 
@@ -537,7 +538,18 @@ try {
   window.__anchors = () => A;
   window.__world = w;
   startLoop(w, getTarget);
-  setTimeout(finish, 250);
+  // keep the loading screen up until the opening scene is complete: the battle seen through the
+  // first gate has loaded, every shader is built, and a few frames have been drawn
+  // (each wait has a time limit, so a slow connection still gets in)
+  document.getElementById("loadText").textContent = "Setting the scene";
+  const wait = ms => new Promise(r => setTimeout(r, ms));
+  const until = (ok, ms) => Promise.race([wait(ms), new Promise(r => { const k = () => ok() ? r() : setTimeout(k, 100); k(); })]);
+  await until(() => window.__battle || w.SMALL, 20000);
+  try {
+    for (const W of w.worlds.slice(0, 2)) if (W.scene) await Promise.race([w.renderer.compileAsync(W.scene, w.camera), wait(8000)]);
+  } catch (e) { console.warn("compile", e); }
+  await Promise.race([wait(1500), new Promise(r => { let n = 0; const f = () => ++n >= 4 ? r() : requestAnimationFrame(f); requestAnimationFrame(f); })]);
+  finish();
 } catch (err) {
   console.error(err);
   document.getElementById("loadText").textContent = "3D didn't load on this device.";

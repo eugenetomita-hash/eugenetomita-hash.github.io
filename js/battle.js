@@ -107,8 +107,11 @@ function keyTimes(K) {
   return out;
 }
 
-export async function buildBattle(root, ctx) {
+export async function buildBattle(world, ctx) {
   const { SMALL, rand, fire, tex, daimyoAt, cameraAt } = ctx;
+  // everything goes on one hidden layer, shown on the first update once it's all in place
+  // (pieces that load early would otherwise wait at the world's origin, in plain view through the last gate)
+  const root = new THREE.Group(); root.visible = false; world.add(root);
   const updates = [];
   const T = { now: 0 };
 
@@ -411,6 +414,7 @@ export async function buildBattle(root, ctx) {
     arrive() { if (duels[0]) duels[0].killAt = Math.min(duels[0].killAt, T.now + 2.5); },
     update(dt, t) {
       T.now = t;
+      root.visible = true;
       for (const S of squads) { S.step(t); S.K.mixer.update(dt); S.K.model.updateMatrixWorld(true); placeSquad(S, t, dt); }
       for (const D of duels) if (t >= D.next) { D.next = Infinity; exchange(D, t); }
       for (let i = queue.length - 1; i >= 0; i--) if (queue[i].at <= t) { const f = queue[i].fn; queue.splice(i, 1); f(); }
